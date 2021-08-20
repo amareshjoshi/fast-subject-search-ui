@@ -12,4 +12,9 @@
  * TODO: add individual lookup
  *
  */
-    echo phpinfo();
+
+/*
+ * testing github from php storm
+ */
+
+echo phpinfo();
