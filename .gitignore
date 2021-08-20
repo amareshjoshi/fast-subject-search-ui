@@ -1,0 +1,8 @@
+#
+# IDEs
+*.code-workspace
+.idea
+
+#
+# docker
+.env

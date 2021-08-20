@@ -1,0 +1,24 @@
+version: '3'
+services:
+  web:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./conf/nginx.default.conf:/etc/nginx/conf.d/default.conf
+      - ./html:/usr/share/nginx/html
+    ports:
+      - "8080:80"
+    networks:
+      - code-network
+
+  php:
+    image: php8-fpm_with_xslt
+    restart: always
+    volumes:
+      - ./html:/usr/share/nginx/html
+    networks:
+      - code-network
+
+networks:
+  code-network:
+    driver: bridge
