@@ -34,10 +34,10 @@
                 if($_POST["query"] == "go") {
                     echo("<p>XSLT Rules</p>");
                     $xmlDoc = new DOMDocument();
-                    $xmlDoc->load("cdcatalog.xml");
+                    $xmlDoc->load("xml/fast-sru.xml");
 
                     $xslDoc = new DOMDocument();
-                    $xslDoc->load("cdcatalog.xsl");
+                    $xslDoc->load("xml/fast-data-test.xsl");
 
                     $htmlDoc = new XSLTProcessor();
 
