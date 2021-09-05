@@ -12,7 +12,13 @@ function displayFastSubject(badUrl) {
 
     //
     // and for now just display it
-    alert("The correct link is: " + subjectUrl);
+    //alert("The correct link is: " + subjectUrl);
+
+    //
+    // can we make this go to an iframe??
+    //window.location.href = subjectUrl;
+    var iframe = document.getElementById('subjectDetail');
+    iframe.src = subjectUrl;
 
     //
     // get the data using AJAX

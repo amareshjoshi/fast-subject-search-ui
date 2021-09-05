@@ -81,7 +81,7 @@
         <p>Detailed information on an individual subject</p>
         <div id="part3">
             <div>
-            <span id="subjectDetail"></span>
+            <iframe id="subjectDetail"></iframe>
             </div>
         </div>
     </div>
