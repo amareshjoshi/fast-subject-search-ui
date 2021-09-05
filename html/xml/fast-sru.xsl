@@ -19,108 +19,120 @@
 
     <!-- meat and potatoes -->
     <xsl:template match="/">
-        <html lang="en">
-            <head></head>
-            <body>
-                <div id="fast-data">
+        <div id="fast-data">
+            <h3>Subject List</h3>
+            <p>
+                <table border="1">
+                    <tr>
+                        <td>Number of matches</td>
+                        <td>
+                            <xsl:value-of select="searchRetrieveResponse/numberOfRecords"/>
+                        </td>
+                    </tr>
+                    <!--
+                    <tr>
+                        <td>Version</td>
+                        <td>
+                            <xsl:value-of select="searchRetrieveResponse/version"/>
+                        </td>
+                    </tr>
+                    -->
+                </table>
+                <hr/>
+                <hr/>
+            </p>
 
-                    <h1>FAST Subjects</h1>
+            <!-- -->
+            <div>
+                <!-- <table> -->
 
-                    <p>
-                        <h3>Subject Search List Header</h3>
+                <xsl:for-each select="searchRetrieveResponse/records/record">
 
-                        <table border="1">
-                            <tr>
-                                <td>Number of matches</td>
-                                <td>
-                                    <xsl:value-of select="searchRetrieveResponse/numberOfRecords"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Version</td>
-                                <td>
-                                    <xsl:value-of select="searchRetrieveResponse/version"/>
-                                </td>
-                            </tr>
-                        </table>
-                        <hr/>
-                        <hr/>
-                    </p>
-
-                    <!-- -->
+                    <table border="1">
+                        <!-- FAST ID -->
+                        <tr>
+                            <td>ID</td>
+                            <td>
+                                <xsl:value-of select="recordData/mx:record/mx:controlfield[@tag='001']"/>
+                            </td>
+                        </tr>
+                        <!-- FAST url -->
+                        <tr>
+                            <td>URL</td>
+                            <td>
+                                <!--
+                                PHP only hs XSLT version 1.0
+                                but replace() only available in XSLT 2.0
+                                <xsl:value-of select="replace(
+                                <xsl:value-of select="recordData/mx:record/mx:datafield[@tag='024']/mx:subfield[@code='a']"/>,
+                                'id\.worldcat\.org',
+                                'experimental.worldcat.org')" />
+                                 -->
+                                <!-- create an anchor element -->
+                                <xsl:element name="a">
+                                    <xsl:attribute name="href">
+                                        <xsl:value-of
+                                                select="recordData/mx:record/mx:datafield[@tag='024']/mx:subfield[@code='a']"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of
+                                            select="recordData/mx:record/mx:datafield[@tag='024']/mx:subfield[@code='a']"/>
+                                </xsl:element>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <xsl:value-of
+                                        select="recordData/mx:record/mx:datafield[@tag='024']/mx:subfield[@code='a']"/>
+                            </td>
+                            <!-- need to asscociate a JS function with this -->
+                            <td>
+                                <!--
+                                <button type="button" onclick="displayFastSubject(\"Amaresh\")">Details</button>
+                                -->
+                                <xsl:element name="button">
+                                    <xsl:attribute name="type">button</xsl:attribute>
+                                    <xsl:attribute name="onclick">
+                                        <xsl:text>displayFastSubject("</xsl:text><xsl:value-of
+                                            select="recordData/mx:record/mx:datafield[@tag='024']/mx:subfield[@code='a']"/><xsl:text>")</xsl:text>
+                                    </xsl:attribute>
+                                    Details
+                                </xsl:element>
+                            </td>
+                        </tr>
+                        <!-- <tr><td>Search String</td><td><xsl:value-of select="recordData/mx:record/mx:datafield[@tag='151']/mx:subfield[@code='a']" /></td></tr> -->
+                    </table>
+                    <!-- ************************************** -->
                     <div>
-                        <!-- <table> -->
-
-                        <xsl:for-each select="searchRetrieveResponse/records/record">
-
-                            <table border="1">
-                                <!-- FAST ID -->
+                        <table border="1">
+                            <!-- "recordData/mx:record/mx:datafield[@tag='*51']/mx:subfield[@code='[a,z]']" -->
+                            <xsl:for-each
+                                    select="recordData/mx:record/mx:datafield[@tag='151']/mx:subfield[@code='z']">
                                 <tr>
-                                    <td>Fast ID</td>
+                                    <td>XML code: tag 151, code z =</td>
                                     <td>
-                                        <xsl:value-of select="recordData/mx:record/mx:controlfield[@tag='001']"/>
+                                        <xsl:value-of select="."/>
                                     </td>
                                 </tr>
-                                <!-- FAST url -->
+                            </xsl:for-each>
+                            <!-- @tag='451' -->
+                            <xsl:for-each
+                                    select="recordData/mx:record/mx:datafield[@tag='451']/mx:subfield[@code='z']">
                                 <tr>
-                                    <td>FAST URL</td>
+                                    <td>XML code: tag 451, code z =</td>
                                     <td>
-                                        <!--
-                                        PHP only hs XSLT version 1.0
-                                        but replace() only available in XSLT 2.0
-                                        <xsl:value-of select="replace(
-                                        <xsl:value-of select="recordData/mx:record/mx:datafield[@tag='024']/mx:subfield[@code='a']"/>,
-                                        'id\.worldcat\.org',
-                                        'experimental.worldcat.org')" />
-                                         -->
-                                        <!-- create an anchor element -->
-                                        <xsl:element name="a">
-                                            <xsl:attribute name="href">
-                                                <xsl:value-of
-                                                        select="recordData/mx:record/mx:datafield[@tag='024']/mx:subfield[@code='a']"/>
-                                            </xsl:attribute>
-                                            <xsl:value-of
-                                                    select="recordData/mx:record/mx:datafield[@tag='024']/mx:subfield[@code='a']"/>
-                                        </xsl:element>
+                                        <xsl:value-of select="."/>
                                     </td>
                                 </tr>
-                                <!-- <tr><td>Search String</td><td><xsl:value-of select="recordData/mx:record/mx:datafield[@tag='151']/mx:subfield[@code='a']" /></td></tr> -->
-                            </table>
-                            <!-- ************************************** -->
-                            <div>
-                                <em>Details</em>
-                                <table border="1">
-                                    <!-- "recordData/mx:record/mx:datafield[@tag='*51']/mx:subfield[@code='[a,z]']" -->
-                                    <xsl:for-each
-                                            select="recordData/mx:record/mx:datafield[@tag='151']/mx:subfield[@code='z']">
-                                        <tr>
-                                            <td>XML code: tag 151, code z =</td>
-                                            <td>
-                                                <xsl:value-of select="."/>
-                                            </td>
-                                        </tr>
-                                    </xsl:for-each>
-                                    <!-- @tag='451' -->
-                                    <xsl:for-each
-                                            select="recordData/mx:record/mx:datafield[@tag='451']/mx:subfield[@code='z']">
-                                        <tr>
-                                            <td>XML code: tag 451, code z =</td>
-                                            <td>
-                                                <xsl:value-of select="."/>
-                                            </td>
-                                        </tr>
-                                    </xsl:for-each>
-                                </table>
-                            </div>
-                            <!-- ************************************** -->
-                            <hr/>
-                        </xsl:for-each>
-                        <!-- </table> -->
-                        <!-- -->
+                            </xsl:for-each>
+                        </table>
                     </div>
-                </div>
-            </body>
-        </html>
+                    <!-- ************************************** -->
+                    <hr/>
+                </xsl:for-each>
+                <!-- </table> -->
+                <!-- -->
+            </div>
+        </div>
     </xsl:template>
 
 </xsl:stylesheet>
