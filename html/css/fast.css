@@ -4,8 +4,8 @@ MSU green
 rgb(24,69,59)
 */
 table {
-  border-color: blue;
-  background-color: coral;
+  border-color: #18453B;
+  background-color: rgba(24, 69, 59, 0.1);
   border-width: thick;
 }
 .grid-container {

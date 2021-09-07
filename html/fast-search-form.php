@@ -5,9 +5,9 @@
 
     TODO: form doesn't work on first load
 
-    TODO: form doesn't work on *some* (few) subsequent loads
-
     TODO: need to hook up to select again
+
+    TODO: need to improve XSLT to pull ALL relevent info
 
     -->
     <meta charset="utf-8"/>
@@ -24,123 +24,140 @@
     <link rel="stylesheet" href="./css/fast.css"/>
     <script src="./js/fast-autosuggest-select2.js"></script>
     <script src="./js/get-subject-details.js"></script>
+    <!--
     <script>
         $(document).ready(function () {
             selectFAST();
         });
     </script>
+    -->
+    <?php
+    /*
+    if (isset($_SERVER["REQUEST_METHOD"])) {
+        echo "<h2>REQUEST METHOD = {$_SERVER["REQUEST_METHOD"]}</h2>";
+    } else {
+        echo "<h2>REQUEST METHOD not SET</h2>";
+    }
+
+    if (isset($_POST["submit"])){
+        echo "<h2>POST:SUBMIT = {$_POST["submit"]}</h2>";
+    } else{
+        echo "<h2>POST:SUBMIT not SET</h2>";
+    }
+
+    if (isset($_POST["query"])){
+        echo "<h2>POST:QUERY = {$_POST["query"]}</h2>";
+    } else{
+        echo "<h2>POST:QUERY not SET</h2>";
+    }
+    */
+
+    $url = "";
+    $subjectList = "";
+    $debugStr = "";
+
+    function getSubjectList($s) {
+        //if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
+        if (isset($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "POST") {
+            if (isset($_POST["submit"]) && $_POST["submit"] == "submit" &&
+                isset($_POST["query"])) {
+
+                // return "<h3>(AT TOP) The search string was {$s}</h3>";
+
+                /*
+                echo "<h2>Processing QUERY!!!</h2>";
+                echo "<h3>REQUEST METHOD = {$_SERVER["REQUEST_METHOD"]}</h3>";
+                echo "<h3>POST:SUBMIT = {$_POST["submit"]}</h3>";
+                echo "<h3>POST:QUERY = {$_POST["query"]}</h3>";
+                */
+
+                /*
+                foreach ($_POST as $key => $value) {
+                    // $debugStr .= "<h2>{$key} => {$value}</h2>";
+                    echo "<h4>_POST {$key} => {$value}</h4>";
+                }
+                */
+
+                /*
+                 * get the data from the FAST URL
+                 */
+                //$site = 'https://experimental.worldcat.org/fast/search';
+                $site = 'https://fast.oclc.org/fast/search';
+                $start_record = 1;
+                $sort_key = "usage";
+                //
+                // these can come from the form
+                $search_str = urlencode($s);
+                $data_type = "application/xml";
+                $maximum_records = 7;
+                $facet = "cql.any";
+                //$facet = "oclc.topic";
+                //$facet = "oclc.geographic";
+
+                //
+                // urlencode() doesn't work because it replaces "+" and "/" which we want to retain unchanged
+                $args = array(
+                    "query" => $facet . "+all+%22" . $search_str . "%22",
+                    "httpAccept" => $data_type,
+                    "maximumRecords" => strval($maximum_records),
+                    "startRecord" => strval($start_record),
+                    "sortKey" => $sort_key
+                );
+
+                //
+                // setup URL
+                $url = $site . "?";
+                foreach ($args as $name => $value) {
+                    $url .= $name . '=' . $value . '&';
+                }
+                // chop off last ampersand
+                $url = substr($url, 0, strlen($url) - 1);
+
+                //
+                // setup Curl
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_HEADER, 0);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+
+                try {
+                    $curlResult = curl_exec($ch);
+                } catch (Exception $e) {
+                    return "No matches";
+                    throw new Exception($e);
+                }
+                curl_close($ch);
+
+                /*
+                 * need to fix the result string: 'xmlns="http...' ==> 'xmlns:srw="http...'
+                 * before the XSLT transform
+                 */
+                $fixedCurlResult = str_replace('xmlns="http://www.loc.gov/zing/srw/"',
+                    'xmlns:srw="http://www.loc.gov/zing/srw/"', $curlResult);
+
+                if ($curlResult) {
+                    $xmlDoc = new DOMDocument();
+                    $xmlDoc->loadXML($fixedCurlResult);
+                    //
+                    $xslDoc = new DOMDocument();
+                    $xslDoc->load("./xml/fast-sru.xsl");
+
+                    $htmlDoc = new XSLTProcessor();
+
+                    $htmlDoc->importStylesheet($xslDoc);
+                    $subjectList = $htmlDoc->transformToXML($xmlDoc);
+
+                    //return "URL = {$url}<br />" . $subjectList;
+                    return $subjectList;
+                }
+            }
+        }
+        return "";
+    }
+    ?>
 </head>
 
 <body>
-<?php
-if (isset($_SERVER["REQUEST_METHOD"])) {
-    echo "<h2>REQUEST METHOD = {$_SERVER["REQUEST_METHOD"]}</h2>";
-}
-
-if (isset($_POST["submit"])){
-    echo "<h2>POST:SUBMIT = {$_POST["submit"]}</h2>";
-}
-
-if (isset($_POST["query"])){
-    echo "<h2>POST:QUERY = {$_POST["query"]}</h2>";
-}
-
-?>
-
-<?php
-$url = "";
-$subjectList = "";
-$debugStr = "";
-
-//if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST["submit"]) && isset($_POST["query"])) {
-        //echo "<h2>query is set!!!</h2>";
-        /**/
-        foreach ($_POST as $key => $value) {
-            $debugStr .= "<h2>{$key} => {$value}</h2>";
-        }
-        /**/
-        /*
-         * get the data from the FAST URL
-         */
-        //$site = 'https://experimental.worldcat.org/fast/search';
-        $site = 'https://fast.oclc.org/fast/search';
-        $start_record = 1;
-        $sort_key = "usage";
-        //
-        // these can come from the web form
-        //$search_str = "india";
-        $search_str = $_POST["query"];
-        $data_type = "application/xml";
-        $maximum_records = 7;
-        $facet = "cql.any";
-        //$facet = "oclc.topic";
-        //$facet = "oclc.geographic";
-
-        //
-        // urlencoding() doesn't work because it replaces "+" and "/" which we want to retain unchanged
-        $args = array(
-            "query" => $facet . "+all+\"" . $search_str . "\"",
-            "httpAccept" => $data_type,
-            "maximumRecords" => strval($maximum_records),
-            "startRecord" => strval($start_record),
-            "sortKey" => $sort_key
-        );
-
-        //
-        // setup URL
-        $url = $site . "?";
-        foreach ($args as $name => $value) {
-            $url .= $name . '=' . $value . '&';
-        }
-        // chop off last ampersand
-        $url = substr($url, 0, strlen($url) - 1);
-
-        //
-        // setup Curl
-        $options = array();
-        $defaults = array(
-            CURLOPT_URL => $url,
-            CURLOPT_HEADER => 0,
-            CURLOPT_RETURNTRANSFER => TRUE,
-            CURLOPT_TIMEOUT => 3
-        );
-
-        $ch = curl_init();
-        curl_setopt_array($ch, ($options + $defaults));
-        if (!$curlResult = curl_exec($ch)) {
-            trigger_error(curl_error($ch));
-        }
-        curl_close($ch);
-        /*
-         * `xmlns="http...` line in $result needs to be
-         * fixed before loading into $xmlDoc=>loadXML(str)
-         */
-
-        $fixedCurlResult = str_replace('xmlns="http://www.loc.gov/zing/srw/"',
-            'xmlns:srw="http://www.loc.gov/zing/srw/"', $curlResult);
-
-
-        if ($curlResult) {
-            $xmlDoc = new DOMDocument();
-            $xmlDoc->loadXML($fixedCurlResult);
-            //+++++++++++++++++++++++++++++++++++++++++++++++++++++
-            $xslDoc = new DOMDocument();
-            $xslDoc->load("./xml/fast-sru.xsl");
-
-            $htmlDoc = new XSLTProcessor();
-
-            $htmlDoc->importStylesheet($xslDoc);
-            $subjectList = $htmlDoc->transformToXML($xmlDoc);
-        } else {
-            $subjectList = "<h3>No results from CURL!! ({$url})</h3>";
-        }
-    } else {
-        $subjectList = "<h3>No query string</h3>";
-    }
-}
-?>
 
 <h1>FAST SRU Search</h1>
 
@@ -188,7 +205,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <!-- bottom left section -->
                 <div class="Zgrid-item lower-left part2">
                     <!-- List of subjects (with alternate spelling and URLs) will go here -->
-                    <?php echo $subjectList; ?>
+                    <?php
+                        if (isset($_POST['submit'])) {
+                            $s = $_POST["query"];
+                            $foo = getSubjectList($s);
+                            echo $foo;
+                        }
+                    ?>
                 </div>
             </td>
             <!-- ************************************************************************ -->
