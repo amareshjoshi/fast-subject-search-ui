@@ -3,6 +3,11 @@ MSU green
 #18453B
 rgb(24,69,59)
 */
+table {
+  border-color: blue;
+  background-color: coral;
+  border-width: thick;
+}
 .grid-container {
   display: grid;
   grid-template-columns: auto auto;

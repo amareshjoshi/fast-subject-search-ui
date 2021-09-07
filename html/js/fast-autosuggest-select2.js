@@ -128,9 +128,12 @@ function select2Ajax(selectId, facet) {
         templateResult: formatSubject,
         //
         // templateSelection defines what happens when a selection is made
-        // it sets how the selected item looks (formatting, including other dta anad text, etc.)
+        // it sets how the selected item looks (formatting, including other data and text, etc.)
         // it can also have code that can affect other parts of the web page
-        // e.g. in the example below it sets the content of a tag outside the form 
+        // e.g. in the example below it sets the content of a tag outside the form
+        // *******************************************
+        // TODO: what *VALUE* does the select drop down actually get?????
+        // *******************************************
         templateSelection: formatSubjectSelection,
     });
     function formatSubject(subject) {
@@ -146,9 +149,9 @@ function select2Ajax(selectId, facet) {
             // we can alter any part of the page we want
             jQuery("#exampleXtra").html(`Choice: <span><b>${subject[facet]}</b></span><br>`);
             */
-
             var $subject = $(`<span>${subject[facet]}</span>`);
-            return $subject;
+            //return $subject;
+            return subject[facet];
         }
         return "Type in a subject ..."
 
