@@ -32,101 +32,90 @@
     </script>
     -->
     <?php
-    /*
-    if (isset($_SERVER["REQUEST_METHOD"])) {
-        echo "<h2>REQUEST METHOD = {$_SERVER["REQUEST_METHOD"]}</h2>";
-    } else {
-        echo "<h2>REQUEST METHOD not SET</h2>";
+    /**
+     * create FAST API URL from search string
+     *
+     * @param $searchTerm - search string
+     * @return string - FAST URL
+     */
+    function createFastUrl($searchTerm){
+        //$site = 'https://experimental.worldcat.org/fast/search';
+        $site = 'https://fast.oclc.org/fast/search';
+        $startRecord = 1;
+        $sortKey = "usage";
+        //
+        // these can come from the web form eventually
+        $search = urlencode($searchTerm);
+        $dataType = "application/xml";
+        $maximumRecords = 7;
+        $facet = "cql.any";
+        //$facet = "oclc.topic";
+        //$facet = "oclc.geographic";
+
+        //
+        // urlencode() doesn't work because it replaces "+" and "/" which we want to retain unchanged
+        $args = array(
+            "query" => $facet . "+all+%22" . $search . "%22",
+            "httpAccept" => $dataType,
+            "maximumRecords" => strval($maximumRecords),
+            "startRecord" => strval($startRecord),
+            "sortKey" => $sortKey
+        );
+
+        $url = $site . "?";
+        foreach ($args as $name => $value) {
+            $url .= $name . '=' . $value . '&';
+        }
+        // chop off last ampersand
+        $url = substr($url, 0, strlen($url) - 1);
+
+        return $url;
+    }
+    /**
+     *
+     * Download data from FAST site using Curl
+     *
+     * @param $url - site URL
+     * @return bool|string
+     * @throws Exception
+     *
+     */
+    function downloadFastData($url){
+        // setup Curl
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+        try {
+            $curlResult = curl_exec($ch);
+        } catch (Exception $e) {
+            throw new Exception($e);
+        }
+        curl_close($ch);
+        return $curlResult;
     }
 
-    if (isset($_POST["submit"])){
-        echo "<h2>POST:SUBMIT = {$_POST["submit"]}</h2>";
-    } else{
-        echo "<h2>POST:SUBMIT not SET</h2>";
-    }
-
-    if (isset($_POST["query"])){
-        echo "<h2>POST:QUERY = {$_POST["query"]}</h2>";
-    } else{
-        echo "<h2>POST:QUERY not SET</h2>";
-    }
-    */
-
-    $url = "";
-    $subjectList = "";
-    $debugStr = "";
-
-    function getSubjectList($s) {
+    /**
+     *
+     * Return FAST subject list based on search string
+     * formatted for display with links to subject details pages
+     *
+     * @param $searchTerm - search string
+     * @return false|string
+     * @throws Exception
+     */
+    function getSubjectList($searchTerm) {
         //if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
         if (isset($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "POST") {
             if (isset($_POST["submit"]) && $_POST["submit"] == "submit" &&
                 isset($_POST["query"])) {
 
-                // return "<h3>(AT TOP) The search string was {$s}</h3>";
 
-                /*
-                echo "<h2>Processing QUERY!!!</h2>";
-                echo "<h3>REQUEST METHOD = {$_SERVER["REQUEST_METHOD"]}</h3>";
-                echo "<h3>POST:SUBMIT = {$_POST["submit"]}</h3>";
-                echo "<h3>POST:QUERY = {$_POST["query"]}</h3>";
-                */
-
-                /*
-                foreach ($_POST as $key => $value) {
-                    // $debugStr .= "<h2>{$key} => {$value}</h2>";
-                    echo "<h4>_POST {$key} => {$value}</h4>";
-                }
-                */
-
-                /*
-                 * get the data from the FAST URL
-                 */
-                //$site = 'https://experimental.worldcat.org/fast/search';
-                $site = 'https://fast.oclc.org/fast/search';
-                $start_record = 1;
-                $sort_key = "usage";
-                //
-                // these can come from the form
-                $search_str = urlencode($s);
-                $data_type = "application/xml";
-                $maximum_records = 7;
-                $facet = "cql.any";
-                //$facet = "oclc.topic";
-                //$facet = "oclc.geographic";
 
                 //
-                // urlencode() doesn't work because it replaces "+" and "/" which we want to retain unchanged
-                $args = array(
-                    "query" => $facet . "+all+%22" . $search_str . "%22",
-                    "httpAccept" => $data_type,
-                    "maximumRecords" => strval($maximum_records),
-                    "startRecord" => strval($start_record),
-                    "sortKey" => $sort_key
-                );
-
-                //
-                // setup URL
-                $url = $site . "?";
-                foreach ($args as $name => $value) {
-                    $url .= $name . '=' . $value . '&';
-                }
-                // chop off last ampersand
-                $url = substr($url, 0, strlen($url) - 1);
-
-                //
-                // setup Curl
-                $ch = curl_init($url);
-                curl_setopt($ch, CURLOPT_HEADER, 0);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 2);
-
-                try {
-                    $curlResult = curl_exec($ch);
-                } catch (Exception $e) {
-                    return "No matches";
-                    throw new Exception($e);
-                }
-                curl_close($ch);
+                // get data
+                $url = createFastUrl($searchTerm);
+                $curlResult = downloadFastData($url);
 
                 /*
                  * need to fix the result string: 'xmlns="http...' ==> 'xmlns:srw="http...'
@@ -207,9 +196,9 @@
                     <!-- List of subjects (with alternate spelling and URLs) will go here -->
                     <?php
                         if (isset($_POST['submit'])) {
-                            $s = $_POST["query"];
-                            $foo = getSubjectList($s);
-                            echo $foo;
+                            $searchTerm = $_POST["query"];
+                            $subjectList = getSubjectList($searchTerm);
+                            echo $subjectList;
                         }
                     ?>
                 </div>
