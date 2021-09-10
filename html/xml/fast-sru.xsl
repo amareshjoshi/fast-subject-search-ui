@@ -73,7 +73,7 @@
             </p>
 
             <!-- -->
-            <div>
+            <div class="fast-subject-data">
                 <!-- <table> -->
 
                 <xsl:for-each select="searchRetrieveResponse/records/record">
@@ -123,18 +123,33 @@
                         <!-- <tr><td>Search String</td><td><xsl:value-of select="recordData/mx:record/mx:datafield[@tag='151']/mx:subfield[@code='a']" /></td></tr> -->
                     </ul>
                     <!-- ************************************** -->
-                    <div>
-                        <ol>
-                            <!-- "recordData/mx:record/mx:datafield[@tag='*51']/mx:subfield[@code='[a,z]']" -->
-                            <xsl:for-each
-                                    select="recordData/mx:record/mx:datafield[@tag='151']/mx:subfield[@code='z']">
-                                <li><xsl:value-of select="."/></li>
-                            </xsl:for-each>
-                        </ol>
+                    <div class="skos-label-list">
+                        <!-- SKOS preferred label -->
+                        <!-- "recordData/mx:record/mx:datafield[@tag='*51']/mx:subfield[@code='[a,z, x]']" -->
+                        <h4>SKOS Preferred Label</h4>
+                        <!-- range: 100-199, a + "-" + (not a) -->
                         <ul>
                             <xsl:for-each
-                                    select="recordData/mx:record/mx:datafield[@tag='451']/mx:subfield[@code='z']">
-                                <li><xsl:value-of select="."/></li>
+                                    select="recordData/mx:record/mx:datafield[@tag >= 100 and @tag &lt;= 199]">
+                                <li><xsl:value-of select="mx:subfield[@code='a']"/>
+                                <xsl:for-each select="mx:subfield[@code!='a' and @code!='w' and @code!='0']">
+                                    <xsl:text> -- </xsl:text><xsl:value-of select="."/>
+                                </xsl:for-each>
+                                </li>
+                            </xsl:for-each>
+                        </ul>
+                        <!-- ******************************** -->
+                        <!-- SKOS alternative label -->
+                        <h4>SKOS Alternative Label</h4>
+                        <!-- range: 400-599?, a + "-" + (not a) -->
+                        <ul>
+                            <xsl:for-each
+                                    select="recordData/mx:record/mx:datafield[@tag >= 400 and @tag &lt;= 599]">
+                                <li><xsl:value-of select="mx:subfield[@code='a']"/>
+                                    <xsl:for-each select="mx:subfield[@code!='a' and @code!='w' and @code!='0']">
+                                        <xsl:text> -- </xsl:text><xsl:value-of select="."/>
+                                    </xsl:for-each>
+                                </li>
                             </xsl:for-each>
                         </ul>
                     </div>

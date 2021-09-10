@@ -8,6 +8,16 @@ table {
   background-color: rgba(24, 69, 59, 0.1);
   border-width: thick;
 }
+
+ul {
+  text-align: left;
+}
+
+ol {
+  text-align: left;
+}
+
+
 .grid-container {
   display: grid;
   grid-template-columns: auto auto;
@@ -29,8 +39,17 @@ table {
   border-color: #18453B;
 }
 
+.fast-subject-data {
+  text-align: left;
+}
+
+.skos-label-list {
+  text-align: left;
+}
+
 .upper {
   grid-column: 1 / 3;
+  text-align: center;
 }
 
 .left-list {
@@ -44,12 +63,13 @@ iframe {
   overflow: auto;
 }
 
-/*
+
 .lower-left {
-  grid-row: 2;
+  /* grid-row: 2; */
+  text-align: left;
 }
 
 .lower-right {
-  grid-row: 2;
+  /* grid-row: 2; */
+  text-align: center;
 }
-*/
