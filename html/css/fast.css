@@ -67,6 +67,8 @@ iframe {
 .lower-left {
   /* grid-row: 2; */
   text-align: left;
+  overflow-y: auto;
+  height: 900px;
 }
 
 .lower-right {
