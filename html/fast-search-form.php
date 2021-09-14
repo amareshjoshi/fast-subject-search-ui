@@ -12,7 +12,7 @@
     -->
     <meta charset="utf-8"/>
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
-    <title>FAST SRU Search</title>
+    <title>FAST Linked Data Search</title>
 
     <!-- jQuery and select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
@@ -160,7 +160,7 @@
 
 <body>
 
-<h1>FAST SRU Search</h1>
+<h1>FAST Linked Data Search</h1>
 
 <p><a href="../">Return to main page</a></p>
 
