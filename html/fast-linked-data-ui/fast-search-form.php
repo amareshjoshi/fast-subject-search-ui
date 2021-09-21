@@ -12,7 +12,7 @@
     -->
     <meta charset="utf-8"/>
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
-    <title>FAST SRU Search</title>
+    <title>FAST Linked Data Search</title>
 
     <!-- jQuery and select2 -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
@@ -21,9 +21,9 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- local stuff -->
-    <link rel="stylesheet" href="./css/fast.css"/>
-    <script src="./js/fast-autosuggest-select2.js"></script>
-    <script src="./js/get-subject-details.js"></script>
+    <link rel="stylesheet" href="css/fast.css"/>
+    <script src="../js/fast-autosuggest-select2.js"></script>
+    <script src="../js/get-subject-details.js"></script>
     <!--
     <script>
         $(document).ready(function () {
@@ -38,7 +38,8 @@
      * @param $searchTerm - search string
      * @return string - FAST URL
      */
-    function createFastUrl($searchTerm){
+    function createFastUrl($searchTerm)
+    {
         //$site = 'https://experimental.worldcat.org/fast/search';
         $site = 'https://fast.oclc.org/fast/search';
         $startRecord = 1;
@@ -71,6 +72,7 @@
 
         return $url;
     }
+
     /**
      *
      * Download data from FAST site using Curl
@@ -80,12 +82,13 @@
      * @throws Exception
      *
      */
-    function downloadFastData($url){
+    function downloadFastData($url, $timeout)
+    {
         // setup Curl
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 2);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
         try {
             $curlResult = curl_exec($ch);
         } catch (Exception $e) {
@@ -93,6 +96,14 @@
         }
         curl_close($ch);
         return $curlResult;
+    }
+
+    //
+    // dummy call
+    try {
+        downloadFastData("http://id.worldcat.org/fast/12345/", 1);
+    } catch (Exception $e) {
+        throw new Exception($e);
     }
 
     /**
@@ -104,18 +115,18 @@
      * @return false|string
      * @throws Exception
      */
-    function getSubjectList($searchTerm) {
+    function getSubjectList($searchTerm)
+    {
         //if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
         if (isset($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "POST") {
             if (isset($_POST["submit"]) && $_POST["submit"] == "submit" &&
                 isset($_POST["query"])) {
 
 
-
                 //
                 // get data
                 $url = createFastUrl($searchTerm);
-                $curlResult = downloadFastData($url);
+                $curlResult = downloadFastData($url, 4);
 
                 /*
                  * need to fix the result string: 'xmlns="http...' ==> 'xmlns:srw="http...'
@@ -143,78 +154,69 @@
         }
         return "";
     }
+
     ?>
 </head>
 
 <body>
 
-<h1>FAST SRU Search</h1>
+<h1>FAST Linked Data Search</h1>
 
-<p><a href="../">Return to main page</a></p>
+<p><a href="../..">Return to main page</a></p>
 
-<div class="Zgrid-container">
-    <table border="3">
-        <!-- ************************************************************************ -->
-        <tr>
-            <td>
-                <!-- top section -->
-                <div class="Zgrid-item upper part1">
-                    <form method="post"
-                          name="formSRUSearch"
-                          action="<?php echo htmlspecialchars($_SERVER[ "PHP_SELF" ]); ?>"
-                    >
-                        <div>
-                            <label>Search for a FAST subject</label>
-                            <!--
-                            <select
-                                    name="query"
-                                    id="query"
-                                    class="fast-autosuggest"
-                                    data-placeholder="FAST subject search"
-                                    data-allow-clear="1"
-                                    data-width="75%"
-                            >
-                            </select>
-                            -->
-                            <input type="text" name="query"
-                                   value="<?php if(isset($_POST["query"])){echo htmlspecialchars($_POST["query"]);} ?>">
-                             <!-- -->
-                        </div>
-                        <br>
-                        <div>
-                            <input type="submit" name="submit" Value="submit">
-                        </div>
-                    </form>
-                </div>
-            </td>
-        </tr>
-        <!-- ************************************************************************ -->
-        <tr>
-            <td>
-                <!-- bottom left section -->
-                <div class="Zgrid-item lower-left part2">
-                    <!-- List of subjects (with alternate spelling and URLs) will go here -->
-                    <?php
-                        if (isset($_POST['submit'])) {
-                            $searchTerm = $_POST["query"];
-                            $subjectList = getSubjectList($searchTerm);
-                            echo $subjectList;
-                        }
-                    ?>
-                </div>
-            </td>
-            <!-- ************************************************************************ -->
-            <td>
-                <!-- bottom left section -->
-                <div class="Zgrid-item lower-right part 3">
-                    <p>Detailed information on an individual subject</p>
-                    <iframe id="subjectDetail"></iframe>
-                </div>
-            </td>
-        </tr>
-    </table>
+<div class="grid-container">
+    <!-- ************************************************************************ -->
+    <!-- top section -->
+    <div class="grid-item upper part1">
+        <form method="post"
+              name="formSRUSearch"
+              action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>"
+        >
+            <div>
+                <label>Search for a FAST subject</label>
+                <!--
+                <select
+                        name="query"
+                        id="query"
+                        class="fast-autosuggest"
+                        data-placeholder="FAST subject search"
+                        data-allow-clear="1"
+                        data-width="75%"
+                >
+                </select>
+                -->
+                <input type="text" name="query"
+                       value="<?php if (isset($_POST["query"])) {
+                           echo htmlspecialchars($_POST["query"]);
+                       } ?>">
+                <!-- -->
+            </div>
+            <br>
+            <div>
+                <input type="submit" name="submit" Value="submit">
+            </div>
+        </form>
+    </div>
+    <!-- ************************************************************************ -->
+    <!-- bottom left section -->
+    <div class="grid-item lower-left part2">
+        <!-- List of subjects (with alternate spelling and URLs) will go here -->
+        <?php
+        if (isset($_POST['submit'])) {
+            $searchTerm = $_POST["query"];
+            $subjectList = getSubjectList($searchTerm);
+            echo $subjectList;
+        }
+        ?>
+    </div>
+    <!-- ************************************************************************ -->
+    <!-- bottom left section -->
+    <div class="grid-item lower-right part 3">
+        <p>Detailed information on an individual subject</p>
+        <iframe id="subjectDetail"></iframe>
+    </div>
 </div>
 
-<p><a href="../">Return to main page</a></p>
+<p><a href="../index.html">Return to main page</a></p>
 </body>
 </html>
