@@ -1382,7 +1382,8 @@ $ = jQuery.noConflict();
                                             </select></div>
                                             -->
 											<!-- select2 connected field -->
-											<label>FAST using Select2</label>
+                                            <!--
+											<label>Select FAST Subjects</label>
 											<select
                                                     name="deposit-subject"
                                                     id="deposit-subject"
@@ -1391,8 +1392,22 @@ $ = jQuery.noConflict();
 													data-allow-clear="1"
 													data-width="90%">
 											</select>
+                                            -->
+                                            <div id="deposit-subject-entry">
+                                                <label for="deposit-subject">FAST Subjects</label>
+                                                <span class="description">Select subjects from the FAST database.<br/>
+                                                </span><br/>
+                                                <select name="deposit-subject"
+                                                        id="deposit-subject"
+                                                        class="fast-select-subject"
+                                                        data-placeholder="Select FAST subjects"
+                                                        data-allow-clear="1"
+                                                        data-width="80%"
+                                                >
+                                            </select>
+                                            </div>
 
-											<div id="fast-subject-array">
+                                            <div id="fast-subject-array">
 												<!-- for each subject selected>
 												<div id="actual fastid">
 												<input type="hidden" id="fast-subject- + fastid" name="fast-subject- + fastid" value="actual fast subject"/>

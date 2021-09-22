@@ -98,8 +98,8 @@ var subjectDB = "autoSubject";
  */
 function select2Ajax(selectId, facet) {
 
-    console.log("selectId = ", selectId);
-    console.log("facet = ", facet);
+    //console.log("selectId = ", selectId);
+    //console.log("facet = ", facet);
 
     $(selectId).select2({
         //theme: 'bootstrap4',
@@ -120,7 +120,7 @@ function select2Ajax(selectId, facet) {
             //
             // query parameters
             data: function (params) {
-                console.log(params);
+                //console.log(params);
                 return {
                     query: params.term, // search term
                     queryIndex: facet,
@@ -203,7 +203,13 @@ function select2Ajax(selectId, facet) {
         templateResult: formatSubject,
         templateSelection: formatSubjectSelection,
     });
+    /**
+     * description: this controls the format of the actual drop down list
+     *
+     * @param subject
+     */
     function formatSubject(subject){
+        //console.log("inside formatSubject, subject = ", subject);
         if (subject.loading){
             //console.log("subject = ", subject)
             return "subject.loading is not FALSE";
@@ -218,30 +224,33 @@ function select2Ajax(selectId, facet) {
         return $subject;
 
     }
+
+    /**
+     *
+     * description: controls any side affects such as writing to other parts of the page
+     *              also the return value is what the choosen value looks like after
+     *              one is picked (may be "")
+     * @param subject
+     * @returns {string}
+     */
     function formatSubjectSelection(subject) {
         if (subject.auth) {
             //console.log("subject = ", subject);
             // we can alter any part of the page outside the SELECT????
-            jQuery("#fast-subject-array").html(
-                "Related Metadata:<br>" +
-                `User entry: <span><b>${subject[facet][0]}</b></span><br>` +
-                `FAST official: <span><b>${subject["auth"]}</b></span><br>` +
-                `Facet: <span><b>${getTypeFromTag(subject["tag"])}</b></span><br>` +
+            var subjectString = `Subject: <span><b>${subject["auth"]}</b></span>, &nbsp;` +
+                `Facet: <span><b>${getTypeFromTag(subject["tag"])}</b></span>, &nbsp;` +
                 // trim the "fst" from ID
-                `FAST Identifier: <span><b>${subject["idroot"].slice(3)}</b></span><br>` + ""
-                //`tag: <span><b>${subject["tag"]}</b></span><br>` +
-                //`type: <span><b>${subject["type"]}</b></span><br>` +
-                //`raw: <span><b>${subject["raw"]}</b></span><br>` +
-                //`breaker: <span><b>${subject["breaker"]}</b></span><br>` +
-                //`indicator: <span><b>${subject["indicator"]}</b></span><br>`
-            );
+                `ID: <span><b>${subject["idroot"].slice(3)}</b></span><br>`
+
+            $("#fast-subject-array").append(subjectString);
 
             var $subject = $(
                 //'<span><img src="https://www.oclc.org/content/dam/oclc/design-images/navigation-logo.png"  height="20" /></span>' +
                 `<span><b>${subject["auth"]}</b></span> &nbsp;` +
                 `<span>(<em>${getTypeFromTag(subject["tag"])}</em>)</span>`
             );
-            return $subject;
+            //return $subject;
+            return "";
         }
         return "Type in a subject ..."
     }
