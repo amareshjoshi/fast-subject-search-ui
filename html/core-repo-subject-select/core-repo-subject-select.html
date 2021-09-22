@@ -1391,28 +1391,18 @@ $ = jQuery.noConflict();
                                                 <label for="deposit-fast-subject">FAST Subjects</label>
                                                 <span class="description">Select subjects from the FAST database.<br/>
                                                 </span><br/>
-                                                <select name="deposit-fast-subject[]"
+                                                <select multiple
+                                                        name="deposit-fast-subject[]"
                                                         id="deposit-fast-subject[]"
-                                                        class="fast-select-subject"
-                                                        data-placeholder="Select FAST subjects"
-                                                        data-allow-clear="true"
-                                                        data-width="95%"
-                                                        multiple="true"
+                                                        class="fast-subject-ajax"
+                                                        data-placeholder="Pick a FAST subject heading"
+                                                        data-allow-clear="false"
+                                                        data-width="90%"
+                                                        data-theme="default"
+                                                        data-dir="ltr"
                                                 >
                                             </select>
                                             </div>
-
-                                            <div id="fast-subject-array">
-												<!-- for each subject selected>
-												<div id="actual fastid">
-												<input type="hidden" id="fast-subject- + fastid" name="fast-subject- + fastid" value="actual fast subject"/>
-												<input type="hidden" id="fast-facet- + fastid" name="fast-facet- + fastid" value="actial fast facet"/>
-												<input type="hidden" id="fast + fastid" name="fast + fastid" value="actual fast ID"/>
-												fast subject, fast-facet, fastid
-												<button type="button" onclick="removeFastSubject()">Remove Subject</button>
-                                                </div>
-												-->
-											</div>
 
                                             <div id="deposit-keyword-entry"><label
                                                     for="deposit-keyword">Tags</label> <span
@@ -2161,11 +2151,11 @@ $ = jQuery.noConflict();
 <!-- required for select2 -->
 <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 <!-- <link href="css/select2.css" type="text/css" rel="stylesheet"/> -->
-<script src="js/fast-subject-select2.js"></script>
+<script src="js/fast-subject-select.js"></script>
 <script>
     $( document ).ready(function() {
         //$("#deposit-subject").hide();
-        selectFAST(".fast-select-subject");
+        selectFAST(".fast-subject-ajax");
     });
 </script>
 <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->

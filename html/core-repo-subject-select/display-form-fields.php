@@ -9,10 +9,27 @@
 <body>
     <h1>Display Humanities CORE Deposit Form Fields</h1>
 
+    <ul>
     <?php
         foreach ($_POST as $key => $value) {
-            echo "key = {$key}, value = {$value}<br>";
+            // check if $value is an array
+            if(!is_array($value)) {
+                echo "<li>key = {$key}, value = {$value}</li>";
+            } else {
+                echo "<li> key = {$key}";
+                echo "<ul>";
+                foreach ($value as $index => $data) {
+                    echo "<li>index = {$index}, data = {$data}</li>";
+                }
+                echo "</ul>";
+                echo "</li>";
+            }
         }
     ?>
+    </ul>
+<br>
+<a href="simple-fast-select.html">Back to the Single FAST Subject select page.</a>
+
+
 </body>
 </html>

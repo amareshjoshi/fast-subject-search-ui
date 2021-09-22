@@ -11,12 +11,12 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- local stuff -->
-    <script src="js/simple-select.js"></script>
+    <script src="js/fast-subject-select.js"></script>
     <!-- <link href="css/select2.css" type="text/css" rel="stylesheet"/> -->
 
     <script>
         $( document ).ready(function() {
-            selectFAST(".fast-ajax-simple");
+            selectFAST(".fast-subject-ajax");
         });
     </script>
 </head>
@@ -31,12 +31,10 @@
 
         <!-- (single) data from ajax -->
         <div class="form-group">
-            Foo: <input type="text" name="name"><br>
-
             <label>FAST Single Subject Select using Select2 with AJAX</label><br>
             <select multiple
                     name="subject-list[]"
-                    class="fast-ajax-simple"
+                    class="fast-subject-ajax"
                     data-placeholder="Pick a FAST subject heading"
                     data-allow-clear="false"
                     data-width="90%"
@@ -48,11 +46,13 @@
         <input type="submit" value="Submit">
     </form>
 
+    <!--
     <hr>
 
     <div id="metadata-array">Metadata List</div>
 
     <hr>
+    -->
 
     <div><a href="index.html">Return to the Index Page</a></div>
 </div>
