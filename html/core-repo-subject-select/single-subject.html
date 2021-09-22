@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple FAST Select2 Example - Single Subject</title>
+
+    <!-- jquery and select2 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+          rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!-- local stuff -->
+    <script src="js/simple-select.js"></script>
+    <!-- <link href="css/select2.css" type="text/css" rel="stylesheet"/> -->
+
+    <script>
+        $( document ).ready(function() {
+            selectFAST(".fast-ajax-simple");
+        });
+    </script>
+</head>
+<body>
+<h1>Simple FAST Select2 Example - Single Subject</h1>
+
+<div class="container">
+    <form name="FastSingleSelect" action="display-form-fields.php" method="post">
+        <!--
+        <input type ="button" class ="Reset" value = "Reset" onclick="formReset(this.form);"><br><br>
+        -->
+
+        <!-- (single) data from ajax -->
+        <div class="form-group">
+            Foo: <input type="text" name="name"><br>
+
+            <label>FAST Single Subject Select using Select2 with AJAX</label><br>
+            <select multiple
+                    name="subject-list[]"
+                    class="fast-ajax-simple"
+                    data-placeholder="Pick a FAST subject heading"
+                    data-allow-clear="false"
+                    data-width="90%"
+                    data-theme="default"
+                    data-dir="ltr"
+            >
+            </select>
+        </div><br>
+        <input type="submit" value="Submit">
+    </form>
+
+    <hr>
+
+    <div id="metadata-array">Metadata List</div>
+
+    <hr>
+
+    <div><a href="index.html">Return to the Index Page</a></div>
+</div>
+
+</body>
+</html>

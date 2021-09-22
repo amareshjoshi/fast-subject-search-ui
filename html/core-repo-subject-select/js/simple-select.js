@@ -1,6 +1,6 @@
 /**
  *
- * TODO: add header information
+ *
  *
  */
 
@@ -24,19 +24,21 @@ function formReset(formName){
     //console.log("(just before select2Ajax) facet = ", facet);
     select2Ajax("#deposit-subject-fast", facet);
     // delete metadata text
-    jQuery("#fast-subject-array").html("");
+    jQuery("#metadata-array").html("");
 }
 /**
  * When a radio button is checked
  * - creates a new select2 list
  * - blanks the metadata
+ *
+ * @param - selectID
  */
 function selectFAST(selectId){
     var facet =  "suggestall";
     //console.log("(inside oncheck Event) facet = ", facet);
     select2Ajax(selectId, facet);
     // delete metadata text
-    jQuery(selectId).html("");
+    //jQuery("#metadata-array").html("");
 }
 
 /**
@@ -80,14 +82,6 @@ function getTypeFromTag(tag) {
     }
 }
 
-
-var metadata;
-//var facet = "suggestall";
-var queryIndices;
-queryIndices = ",idroot,auth,tag,type,raw,breaker,indicator";
-var subjectDB = "autoSubject";
-//queryIndices = "";
-
 /**
  *
  * Takes the ID of a select control and creates and attaches a Select2 object to it.
@@ -97,23 +91,29 @@ var subjectDB = "autoSubject";
  * @param facet - facet to use
  */
 function select2Ajax(selectId, facet) {
+    //var metadata;
+    var queryIndices = ",idroot,auth,tag,type,raw,breaker,indicator";
+    var subjectDB = "autoSubject";
 
     //console.log("selectId = ", selectId);
     //console.log("facet = ", facet);
 
     $(selectId).select2({
         //theme: 'bootstrap4',
-        theme: 'default',
+        theme: $(this).data('theme'),
         width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
         placeholder: $(this).data('placeholder'),
         allowClear: Boolean($(this).data('allow-clear')),
-        multiple: $(this).data('false'),
+        // multiple: is set from the HTML select field option
+        // if multiple is TRUE -> closeOnSelect is FALSE
         //closeOnSelect: !$(this).attr('multiple'),
         closeOnSelect: true,
+        dir: $(this).data('dir'),
         disabled: false,
+        debug: true,
         delay: 250,
         minimumInputLength: 3,
-        maximumSelectionLength: 0,
+        maximumSelectionLength: 5,
         ajax: {
             url: "https://fast.oclc.org/searchfast/fastsuggest",
             // using 'json' gives a CORS error
@@ -155,16 +155,13 @@ function select2Ajax(selectId, facet) {
                 //
                 // use the docs array from FAST
                 var arrayFast = data.response.docs;
-                // TODO: we may want to trim arrayFast to eliminate DUPLICATE IDs (FAST IDs)
-                //  OR we could trim the arraySelect2 instead
 
-                //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 //console.log("data.response.docs = ", data.response.docs);
-                //
+
+                //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
                 // create an array in the select2 format
                 var arraySelect2 = {items: []};
                 //arrayFast.forEach(fillSelect);
-                arrayFast.forEach(simpleSelect);
 
                 //console.log(dataFast)
                 function fillSelect(value, index) {
@@ -182,11 +179,17 @@ function select2Ajax(selectId, facet) {
                         "auth": value["auth"],
                     };
                 }
+                //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+                arrayFast.forEach(simpleSelect);
                 // take arrayFast and just add an "id": ??? fied to each element
                 function simpleSelect(value, index) {
                     var data = value;
-                    data.id = index;
+                    //data.id = index;
+                    // we are going to have to use all the data we want to save as the "id" field
+                    data.id = value["idroot"] + ":" + value["auth"] + ":" + getTypeFromTag(value["tag"]);
+                    //
+                    // this can probably be simplified (see above function fillSelect())
                     arraySelect2.items[index] = data;
                 }
                 //-------------------------------------------------------------------------
@@ -254,8 +257,8 @@ function select2Ajax(selectId, facet) {
                 // `<span><b>${subject["auth"]}</b></span> &nbsp;` +
                 // `<span>(<em>${getTypeFromTag(subject["tag"])}</em>)</span>`
                 `<span><b>${subject["auth"]}</b></span> &nbsp;` +
-                `<span>(<em>${getTypeFromTag(subject["tag"])}</em>)</span> &nbsp;` +
-                `<span><b>${subject["idroot"].slice(3)}</b></span>`
+                `<span>(<em>${getTypeFromTag(subject["tag"])}</em>)</span>` // &nbsp;` +
+                //`<span><b>${subject["idroot"].slice(3)}</b></span>`
             );
             return $subject;
         }

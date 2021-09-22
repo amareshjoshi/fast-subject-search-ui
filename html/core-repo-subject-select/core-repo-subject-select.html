@@ -1045,7 +1045,9 @@ $ = jQuery.noConflict();
                                         };</script>
                                         <h3>New CORE</em> Deposit</h3>
                                         <form id="deposit-form" name="deposit-form" class="standard-form"
-                                              method="post" enctype="multipart/form-data"><input type="hidden"
+                                              method="post" enctype="multipart/form-data">
+                                            <!-- -->
+                                            <input type="hidden"
                                                                                                  name="action"
                                                                                                  id="action"
                                                                                                  value="deposit_file"/>
@@ -1081,6 +1083,7 @@ $ = jQuery.noConflict();
                                                 </div>
                                                 <div id="console"></div>
                                             </div>
+                                            <!-- -->
                                             <div id="deposit-published-entry"><label for="deposit-published">Has
                                                 this item been previously published?</label> <input type="radio"
                                                                                                     name="deposit-published"
@@ -1367,42 +1370,34 @@ $ = jQuery.noConflict();
                                                     </option>
                                                 </select>
                                             </div>
-											<!--
+											<!-- old subject selection
                                             <div id="deposit-subject-entry"><label
                                                     for="deposit-subject">Subjects</label> <span
                                                     class="description">Assign up to five subject fields to your
 														item.<br/>Please let us know if you would like to <a
                                                         href="mailto:core@hcommons.org?subject=CORE"
                                                         target="_blank">suggest additional subject
-															fields</a>.</span><br/> <select name="deposit-subject[]"
-                                                                                            id="deposit-subject[]"
-                                                                                            class="js-basic-multiple-subjects"
-                                                                                            multiple="multiple"
-                                                                                            data-placeholder="Select subjects">
-                                            </select></div>
+															fields</a>.</span><br/>
+                                                <select name="deposit-subject[]"
+                                                        id="deposit-subject[]"
+                                                        class="js-basic-multiple-subjects"
+                                                        multiple="multiple"
+                                                        data-placeholder="Select subjects">
+                                                </select>
+                                            </div>
                                             -->
-											<!-- select2 connected field -->
-                                            <!--
-											<label>Select FAST Subjects</label>
-											<select
-                                                    name="deposit-subject"
-                                                    id="deposit-subject"
-													class="fast-select-subject"
-													data-placeholder="Pick a FAST subject"
-													data-allow-clear="1"
-													data-width="90%">
-											</select>
-                                            -->
-                                            <div id="deposit-subject-entry">
-                                                <label for="deposit-subject">FAST Subjects</label>
+                                            <!-- FAST Subject Selection -->
+                                            <div id="deposit-fast-subject-entry">
+                                                <label for="deposit-fast-subject">FAST Subjects</label>
                                                 <span class="description">Select subjects from the FAST database.<br/>
                                                 </span><br/>
-                                                <select name="deposit-subject"
-                                                        id="deposit-subject"
+                                                <select name="deposit-fast-subject[]"
+                                                        id="deposit-fast-subject[]"
                                                         class="fast-select-subject"
                                                         data-placeholder="Select FAST subjects"
-                                                        data-allow-clear="1"
-                                                        data-width="80%"
+                                                        data-allow-clear="true"
+                                                        data-width="95%"
+                                                        multiple="true"
                                                 >
                                             </select>
                                             </div>
@@ -1984,9 +1979,10 @@ $ = jQuery.noConflict();
                                                 </div>
                                             </div>
                                             <br/> <input id="deposit-submit" name="deposit-submit"
-                                                         type="submit" value="Deposit"/> <a id="deposit-cancel"
-                                                                                            href="/deposits/"
-                                                                                            class="button white">Cancel</a>
+                                                         type="submit" value="Deposit"/>
+                                            <a id="deposit-cancel"
+                                                    href="/deposits/"
+                                                    class="button white">Cancel</a>
                                     </div>
                                     </form> <br/><span class="description">Required fields are marked
 											*.</span><br/> <br/>
@@ -2164,11 +2160,12 @@ $ = jQuery.noConflict();
 <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 <!-- required for select2 -->
 <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
-<link href="css/select2.css" type="text/css" rel="stylesheet"/>
+<!-- <link href="css/select2.css" type="text/css" rel="stylesheet"/> -->
 <script src="js/fast-subject-select2.js"></script>
 <script>
     $( document ).ready(function() {
-        selectFAST();
+        //$("#deposit-subject").hide();
+        selectFAST(".fast-select-subject");
     });
 </script>
 <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->

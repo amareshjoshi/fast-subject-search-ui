@@ -38,7 +38,7 @@ function selectFAST(){
     //console.log("(inside oncheck Event) facet = ", facet);
     select2Ajax(".js-example-ajax-single", facet);
     // delete metadata text
-    jQuery("#exampleXtra").html("");
+    //jQuery("#exampleXtra").html("");
 }
 
 /**
@@ -109,7 +109,6 @@ function select2Ajax(selectId, facet) {
         allowClear: Boolean($(this).data('allow-clear')),
         closeOnSelect: !$(this).attr('multiple'),
         disabled: false,
-        delay: 250,
         minimumInputLength: 2,
         ajax: {
             url: "https://fast.oclc.org/searchfast/fastsuggest",
@@ -118,6 +117,7 @@ function select2Ajax(selectId, facet) {
             // not sure what this does?
             jsonp: "json.wrf",
             type: "GET",
+            delay: 1000, // wait 250 milliseconds before triggering the request
             //
             // query parameters
             data: function (params) {
@@ -223,19 +223,27 @@ function select2Ajax(selectId, facet) {
         if (subject.auth) {
             //console.log("subject = ", subject);
             // we can alter any part of the page outside the SELECT????
-            jQuery("#exampleXtra").html(
+
+            $("#metadata-list").append(
                 "Related Metadata:<br>" +
                 `User entry: <span><b>${subject[facet][0]}</b></span><br>` +
                 `FAST official: <span><b>${subject["auth"]}</b></span><br>` +
                 `Facet: <span><b>${getTypeFromTag(subject["tag"])}</b></span><br>` +
                 // trim the "fst" from ID
-                `FAST Identifier: <span><b>${subject["idroot"].slice(3)}</b></span><br>` + ""
+                `FAST Identifier: <span><b>${subject["idroot"].slice(3)}</b></span><br><hr>` + ""
                 //`tag: <span><b>${subject["tag"]}</b></span><br>` +
                 //`type: <span><b>${subject["type"]}</b></span><br>` +
                 //`raw: <span><b>${subject["raw"]}</b></span><br>` +
                 //`breaker: <span><b>${subject["breaker"]}</b></span><br>` +
                 //`indicator: <span><b>${subject["indicator"]}</b></span><br>`
             );
+            /*
+            var newDiv = document.createElement("p");
+            const newContent = document.createTextNode("the way is void!");
+            newDiv.appendChild(newContent);
+            var metaList = document.getElementById('metadata-list');
+            metaList.append(newDiv);
+            */
 
             var $subject = $(
                 //'<span><img src="https://www.oclc.org/content/dam/oclc/design-images/navigation-logo.png"  height="20" /></span>' +
