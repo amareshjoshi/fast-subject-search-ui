@@ -1,44 +1,20 @@
 /**
  *
- *
+ * Functions used by Select2 to retrive and format AJAX data
  *
  */
 
 /**
- * Resets the form
- * - the radio buttons
- * - the select list in the form
- * - blanks the metadata
- *
- * @param formName
- */
-function formReset(formName){
-    // reset the radio buttons
-    formName.reset();
-
-    //
-    // reset the select2
-    $(".fast-select-subject").select2("close");
-
-    var facet =  "suggestall";
-    //console.log("(just before select2Ajax) facet = ", facet);
-    select2Ajax("#deposit-subject-fast", facet);
-    // delete metadata text
-    jQuery("#metadata-array").html("");
-}
-/**
- * When a radio button is checked
- * - creates a new select2 list
- * - blanks the metadata
+ * description: Calls the main Select2 function
+ *              could be used for other side effects if needed
+ *              (e.g. modifying other parts of the page)
  *
  * @param - selectID
  */
 function selectFAST(selectId){
     var facet =  "suggestall";
-    //console.log("(inside oncheck Event) facet = ", facet);
     select2Ajax(selectId, facet);
-    // delete metadata text
-    //jQuery("#metadata-array").html("");
+    // do other changes if required
 }
 
 /**
@@ -91,20 +67,15 @@ function getTypeFromTag(tag) {
  * @param facet - facet to use
  */
 function select2Ajax(selectId, facet) {
-    //var metadata;
     var queryIndices = ",idroot,auth,tag,type,raw,breaker,indicator";
     var subjectDB = "autoSubject";
 
-    //console.log("selectId = ", selectId);
-    //console.log("facet = ", facet);
-
     $(selectId).select2({
-        //theme: 'bootstrap4',
+        // multiple: is set from the HTML select field option
         theme: $(this).data('theme'),
         width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
         placeholder: $(this).data('placeholder'),
         allowClear: Boolean($(this).data('allow-clear')),
-        // multiple: is set from the HTML select field option
         // if multiple is TRUE -> closeOnSelect is FALSE
         //closeOnSelect: !$(this).attr('multiple'),
         closeOnSelect: true,
@@ -116,12 +87,12 @@ function select2Ajax(selectId, facet) {
         maximumSelectionLength: 5,
         ajax: {
             url: "https://fast.oclc.org/searchfast/fastsuggest",
-            // using 'json' gives a CORS error
+            // we need to use "padded" json (jsonp)
+            // using regular json gives a CORS error
             dataType: 'jsonp',
             // not sure what this does?
             jsonp: "json.wrf",
             type: "GET",
-            //
             // query parameters
             data: function (params) {
                 //console.log(params);
@@ -134,79 +105,45 @@ function select2Ajax(selectId, facet) {
                     //page: params.page || 1,
                 };
             },
+            /**
+             * description: not sure what this does. don't think we need this
+             *
+             * @param data
+             * @param textStatus
+             * @param jqXHR
+             */
             success: function(data,textStatus, jqXHR){
-                // DON't NEED THIS
-                // we can just put extra values into the FASTdata structure
-                // (besides the required "id" and "text" fields)
-                //
-                // can we also create an object or array containing metadata to use later?
-                // metadata = data.response.docs;
-                // {idroot: other_metadata}
-                // console.log("inside success call back of ajax!!!");
-                // console.log(data.response.docs);
-
-                //
-                // then if metadata is global we can use it outside the ajax call
-
             },
+            /**
+             * description: format FAST data into Select2 format
+             *
+             * @param data data returned by FAST API call
+             * @returns {results: array usable by Select2}}
+             */
             processResults: function (data) {
-                //console.log(data.response.docs);
-                // format FAST data into select2 format
-                //
-                // use the docs array from FAST
-                var arrayFast = data.response.docs;
+                // the docs array from FAST the actual data we need
+                var arraySelect2 = data.response.docs;
 
-                //console.log("data.response.docs = ", data.response.docs);
-
-                //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-                // create an array in the select2 format
-                var arraySelect2 = {items: []};
-                //arrayFast.forEach(fillSelect);
-
-                //console.log(dataFast)
-                function fillSelect(value, index) {
-                    //console.log(value[facet][0]);
-                    displayText = `Auth = ${value["auth"]}, Typed = ${value[facet][0]},  FASTID = ${value["idroot"]}, Facet =  ${value["tag"]}`;
-                    //arraySelect2.items[index] = {"id": index, "text": displayText};
-                    //
-                    // "id" and "text" are required,
-                    // but we can put in extra metadata fields for later use
-                    arraySelect2.items[index] = {
-                        "id": index,
-                        //"text": displayText,
-                        "text": value[facet][0],
-                        "fastid": value["idroot"],
-                        "auth": value["auth"],
-                    };
-                }
-                //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-                arrayFast.forEach(simpleSelect);
-                // take arrayFast and just add an "id": ??? fied to each element
-                function simpleSelect(value, index) {
+                /**
+                 * function used to modify the raw data from FAST into a Select2 format.
+                 * all we need to do is to add a field called ["id"] to the array
+                 *
+                 * @param value
+                 * @param index
+                 */
+                function convertFastToSelect2(value, index) {
                     var data = value;
-                    //data.id = index;
-                    // we are going to have to use all the data we want to save as the "id" field
+                    // Select2 requires a field called ["id"]
+                    // ["id"] needs to have all the data we want to save for later use
                     data.id = value["idroot"] + ":" + value["auth"] + ":" + getTypeFromTag(value["tag"]);
-                    //
-                    // this can probably be simplified (see above function fillSelect())
-                    arraySelect2.items[index] = data;
                 }
-                //-------------------------------------------------------------------------
+                arraySelect2.forEach(convertFastToSelect2);
+
                 return {
-                    //results: arraySelect2.items,
-                    results: arrayFast,
-                    pagination: {
-                        more: false
-                    }
+                    results: arraySelect2
                 };
             },
-            //
-            // other ajax stuff???
         },
-        //
-        // TODO: write these functions
-        // **** we won't see the drop down until the formatSubject is defined!!!
         templateResult: formatSubject,
         templateSelection: formatSubjectSelection,
     });
@@ -222,12 +159,13 @@ function select2Ajax(selectId, facet) {
             return "subject.loading is not FALSE";
         }
         var $subject = $(
-            // ???
+            // alternative text to FAST authorized subject heading
             `<span>${subject[facet][0]}</span> &nbsp;` +
             // authorized FAST subject heading
             `<span>(<b>${subject["auth"]}</b></span> &nbsp;` +
             // facet
             `<span>(<em>${getTypeFromTag(subject["tag"])}</em>))</span>`
+            // we'll leave the FAST ID out for now
             //`<span>(${subject["idroot"]})</span>`
         );
         return $subject;
@@ -236,23 +174,16 @@ function select2Ajax(selectId, facet) {
 
     /**
      *
-     * description: controls any side affects such as writing to other parts of the page
-     *              also the return value is what the choosen value looks like after
-     *              one is picked (may be "")
+     * description: Controls what the select field looks like after
+     *              the user has made a choice (may be "" (blank)
+     *              if you want the select filed to be empty)
+     *              It also can be used to do any side affects such as writing to other parts of the page
      * @param subject
      * @returns {string}
      */
     function formatSubjectSelection(subject) {
         if (subject.auth) {
-            //console.log("subject = ", subject);
-            // we can alter any part of the page outside the SELECT????
-            var subjectString = `Subject: <span><b>${subject["auth"]}</b></span>, &nbsp;` +
-                `Facet: <span><b>${getTypeFromTag(subject["tag"])}</b></span>, &nbsp;` +
-                // trim the "fst" from ID
-                `ID: <span><b>${subject["idroot"].slice(3)}</b></span><br>`
-
-            //$("#fast-subject-array").append(subjectString);
-
+            // what the choosen item will look like in the select field
             var $subject = $(
                 // `<span><b>${subject["auth"]}</b></span> &nbsp;` +
                 // `<span>(<em>${getTypeFromTag(subject["tag"])}</em>)</span>`
@@ -260,9 +191,15 @@ function select2Ajax(selectId, facet) {
                 `<span>(<em>${getTypeFromTag(subject["tag"])}</em>)</span>` // &nbsp;` +
                 //`<span><b>${subject["idroot"].slice(3)}</b></span>`
             );
+            // we can also alter any part of the page we want
+            // var subjectString = `Subject: <span><b>${subject["auth"]}</b></span>, &nbsp;` +
+            //     `Facet: <span><b>${getTypeFromTag(subject["tag"])}</b></span>, &nbsp;` +
+            //     // trim the "fst" from ID
+            //     `ID: <span><b>${subject["idroot"].slice(3)}</b></span><br>`
+            // $("#fast-subject-array").append(subjectString);
+
             return $subject;
         }
-        return "Type in a subject ..."
+        return "Select a FAST subject ..."
     }
-
 }
