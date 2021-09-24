@@ -83,7 +83,7 @@ function select2Ajax(selectId, facet) {
         disabled: false,
         debug: true,
         delay: 250,
-        minimumInputLength: 3,
+        minimumInputLength: 2,
         maximumSelectionLength: 5,
         ajax: {
             url: "https://fast.oclc.org/searchfast/fastsuggest",

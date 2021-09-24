@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Display Humanities CORE Deposit Form Fields</title>
+    <title>Display Form Fields</title>
 </head>
 <body>
-    <h1>Display Humanities CORE Deposit Form Fields</h1>
+    <h1>Display Form Fields</h1>
 
     <ul>
     <?php
@@ -27,8 +27,9 @@
         }
     ?>
     </ul>
-<br>
-<a href="simple-fast-select.html">Back to the Single FAST Subject select page.</a>
+    <br>
+    <br>
+    <a href="simple-fast-select.html">Back to the simple FAST Subject select page.</a>
 
 
 </body>

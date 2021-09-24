@@ -23,13 +23,3 @@ function displayFastSubject(badUrl) {
     var iframe = document.getElementById('subjectDetail');
     iframe.src = subjectUrl;
 
-    //
-    // get the data using AJAX
-
-    //
-    // convert it using XSLT
-
-    //
-    // insert it into the document
-
-}
