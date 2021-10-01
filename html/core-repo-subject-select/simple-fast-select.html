@@ -24,11 +24,6 @@
 
 <div class="container">
     <form name="FastSelect" action="display-form-fields.php" method="post">
-        <!--
-        <input type ="button" class ="Reset" value = "Reset" onclick="formReset(this.form);"><br><br>
-        -->
-
-        <!-- (single) data from ajax -->
         <div class="form-group">
             <label>FAST Subject Select using Select2 with AJAX</label><br><br>
             <select multiple
@@ -39,9 +34,16 @@
                     data-width="90%"
                     data-theme="default"
                     data-dir="ltr"
+                    data-minimum-input-length="2"
+                    data-maximum-selection-length="5"
+                    data-close-on-select="true"
+                    data-disabled="false"
+                    data-debug="false"
+                    data-delay="250"
             >
             </select>
-        </div><br>
+        </div>
+        <br>
         <input type="submit" value="Submit">
     </form>
 

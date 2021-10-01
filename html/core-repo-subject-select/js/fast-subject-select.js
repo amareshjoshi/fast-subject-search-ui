@@ -72,19 +72,17 @@ function select2Ajax(selectId, facet) {
 
     $(selectId).select2({
         // multiple: is set from the HTML select field option
-        theme: $(this).data('theme'),
+        theme: $(this).data('theme') ? $(this).data('theme') : 'default',
         width: $(this).data('width') ? $(this).data('width') : $(this).hasClass('w-100') ? '100%' : 'style',
-        placeholder: $(this).data('placeholder'),
-        allowClear: Boolean($(this).data('allow-clear')),
-        // if multiple is TRUE -> closeOnSelect is FALSE
-        //closeOnSelect: !$(this).attr('multiple'),
-        closeOnSelect: true,
-        dir: $(this).data('dir'),
-        disabled: false,
-        debug: true,
-        delay: 250,
-        minimumInputLength: 2,
-        maximumSelectionLength: 5,
+        placeholder: $(this).data('placeholder') ? $(this).data('placeholder') : "Please make a selection",
+        allowClear: $(this).data('allow-clear') ? Boolean($(this).data('allow-clear')) : true,
+        closeOnSelect: $(this).data('close-on-select') ? Boolean($(this).data('close-on-select')) : true,
+        dir: $(this).data('dir') ? $(this).data('dir') : 'ltr',
+        disabled: $(this).data('disabled') ? Boolean($(this).data('disabled')) : false,
+        debug: $(this).data('debug') ? Boolean($(this).data('debug')) : false,
+        delay: $(this).data('delay') ? Number($(this).data('delay')) : 250,
+        minimumInputLength: $(this).data('minimum-input-length') ? Number($(this).data('minimum-input-length')) : 3,
+        maximumSelectionLength: $(this).data('maximum-selection-length') ? Number($(this).data('maximum-selection-length')) : 5,
         ajax: {
             url: "https://fast.oclc.org/searchfast/fastsuggest",
             // we need to use "padded" json (jsonp)
