@@ -6,10 +6,15 @@
 
     <!-- jquery and select2 -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
-          rel="stylesheet"/>
+    <!-- latest version
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    -->
+    <!-- version 4.0.0 -->
+    <link href="./js/dist-4.0.0/css/select2.min.css" rel="stylesheet"/>
+    <script src="./js/dist-4.0.0/js/select2.min.js"></script>
+    <!-- -->
+    
     <!-- local stuff -->
     <script src="js/fast-subject-select.js"></script>
 
