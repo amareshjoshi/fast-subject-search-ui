@@ -6,14 +6,15 @@
 
     <!-- jquery and select2 -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- latest version
+
+    <!-- latest version -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    -->
-    <!-- version 4.0.0 -->
+    <!-- -->
+    <!-- version 4.0.0
     <link href="./js/dist-4.0.0/css/select2.min.css" rel="stylesheet"/>
     <script src="./js/dist-4.0.0/js/select2.min.js"></script>
-    <!-- -->
+    -->
     
     <!-- local stuff -->
     <script src="js/fast-subject-select.js"></script>
@@ -67,7 +68,7 @@
                 foreach ($_POST as $key => $value) {
                     if($value == "on" ) {
                         // that means this is a *checked* check box
-                        // the *value* (the fast data fields) is actually in the *key* field
+                        // the fast data fields are in the *$key* field (the "name" attribute of the checkbox)
                         array_push($fastDataArray, $key);
                     }
                 }
@@ -78,6 +79,9 @@
                 // we also want to limit total subjects to 5
                 $minFastDataArray = [];
                 foreach ($fastDataArray as $data) {
+                    // for some reason spaces get changed to underscores
+                    // so we need to change them back
+                    $data = str_replace("_", " ", $data);
                     if(!in_array($data, $minFastDataArray)) {
                         array_push($minFastDataArray, $data);
                         $maximumSubjects--;
@@ -88,7 +92,7 @@
                     $subjectFacet = "<span><b>${fastData[1]}</b></span> &nbsp; <span>(<em>${fastData[2]}</em>)</span>";
                     // add a delete checkbox
                     $checkBox = "<div>Keep this Subject: &nbsp; " .
-                        "<input type=\"checkbox\" id=\"${data}\" name=\"${data}\" checked>" .
+                        "<input type=\"checkbox\" name=\"${data}\" checked>" .
                         "&nbsp; &nbsp;" .
                         "<label for=\"${data}\">${subjectFacet}</label></div>";
 
@@ -125,6 +129,32 @@
         <br>
         <input type="submit" value="Submit">
     </form>
+
+    <!--
+    <hr>
+    <h3>Debug</h3>
+    <ul>
+        <?php
+        /****************************
+        foreach ($_POST as $key => $value) {
+            // check if $value is an array
+            if(!is_array($value)) {
+                $valueType = gettype($value);
+                echo "<li>key = {$key}, value = {$value}, value type = {$valueType}</li>";
+            } else {
+                echo "<li> key = {$key}";
+                echo "<ul>";
+                foreach ($value as $index => $data) {
+                    echo "<li>index = {$index}, data = {$data}</li>";
+                }
+                echo "</ul>";
+                echo "</li>";
+            }
+        }
+        ****************************/
+        ?>
+    </ul>
+    -->
 
     <br>
     <br>
